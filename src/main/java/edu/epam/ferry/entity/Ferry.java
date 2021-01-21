@@ -1,7 +1,5 @@
-package edu.epam.ferry;
+package edu.epam.ferry.entity;
 
-import edu.epam.ferry.entity.FerryState;
-import edu.epam.ferry.entity.Vehicle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

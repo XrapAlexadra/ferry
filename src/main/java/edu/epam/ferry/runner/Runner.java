@@ -1,6 +1,6 @@
 package edu.epam.ferry.runner;
 
-import edu.epam.ferry.Ferry;
+import edu.epam.ferry.entity.Ferry;
 import edu.epam.ferry.entity.Vehicle;
 import edu.epam.ferry.exception.VehicleException;
 import edu.epam.ferry.factory.VehicleFactory;

@@ -1,6 +1,6 @@
 package edu.epam.ferry.thread;
 
-import edu.epam.ferry.Ferry;
+import edu.epam.ferry.entity.Ferry;
 import edu.epam.ferry.entity.Vehicle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
