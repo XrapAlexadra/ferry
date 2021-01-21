@@ -1,0 +1,14 @@
+
+# End of https://www.gitignore.io/api/maven,intellij
+# IDEA
+.idea/
+*.iml
+/*/*.iml
+/*/*.ipr
+/*/*.iws
+
+# maven
+/*/target/
+
+# app
+/logs
