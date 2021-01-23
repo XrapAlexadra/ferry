@@ -6,7 +6,6 @@ import edu.epam.ferry.exception.VehicleException;
 import edu.epam.ferry.factory.VehicleFactory;
 import edu.epam.ferry.parser.VehicleParser;
 import edu.epam.ferry.reader.DataReader;
-import edu.epam.ferry.thread.VehicleTransfer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +25,7 @@ public class Runner {
         ferry.setSize(15);
         ferry.setLiftingCapacity(15);
         for (Vehicle vehicle : vehicleList) {
-            executorService.submit(new VehicleTransfer(vehicle));
+            executorService.submit(vehicle);
         }
 
     }

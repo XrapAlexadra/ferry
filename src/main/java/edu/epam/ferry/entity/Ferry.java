@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -14,7 +15,7 @@ public class Ferry {
     private static final Logger logger = LogManager.getLogger(Ferry.class);
 
     private static Ferry instance;
-    private static boolean instanceExist = false;
+    private static AtomicBoolean instanceExist = new AtomicBoolean(false);
     private int size;
     private int liftingCapacity;
     private FerryState currentState = FerryState.EMPTY;
@@ -26,16 +27,15 @@ public class Ferry {
     private Ferry() {
     }
 
-    public static Ferry getInstance(){
-        if(!instanceExist){
+    public static Ferry getInstance() {
+        if (instanceExist.compareAndSet(false, true)) {
             lock.lock();
             try {
-                if(instance == null){
+                if (instance == null) {
                     instance = new Ferry();
-                    instanceExist = true;
+                    instanceExist.set(true);
                 }
-            }
-            finally {
+            } finally {
                 lock.unlock();
             }
         }
@@ -50,14 +50,10 @@ public class Ferry {
         this.liftingCapacity = liftingCapacity;
     }
 
-    public void transfer(Vehicle vehicle) {
-        try {
-            addCar(vehicle);
-            sailing(vehicle);
-            discharging(vehicle);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void transfer(Vehicle vehicle){
+        addCar(vehicle);
+        sailing(vehicle);
+        discharging(vehicle);
     }
 
     private void addCar(Vehicle vehicle) {
@@ -77,7 +73,7 @@ public class Ferry {
             logger.info("{}: boarded the ferry waiting for start.", Thread.currentThread().getName());
             condition.await(5000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("InterruptedException: {}", e.getMessage());
         } finally {
             lock.unlock();
         }
@@ -86,23 +82,27 @@ public class Ferry {
     private void discharging(Vehicle vehicle) {
         lock.lock();
         try {
-            logger.info("{} : discharge", Thread.currentThread().getName());
             carsList.remove(vehicle);
+            logger.info("{} : discharged!", Thread.currentThread().getName());
             TimeUnit.MILLISECONDS.sleep(1000);
             if (carsList.isEmpty()) {
                 currentState = FerryState.EMPTY;
                 condition.signalAll();
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("InterruptedException: {}", e.getMessage());
         } finally {
             lock.unlock();
         }
     }
 
-    private void sailing(Vehicle vehicle) throws InterruptedException {
+    private void sailing(Vehicle vehicle){
         logger.info("{} : cross the river!", Thread.currentThread().getName());
-        TimeUnit.MILLISECONDS.sleep(5000);
+        try {
+            TimeUnit.MILLISECONDS.sleep(5000);
+        } catch (InterruptedException e) {
+            logger.error("InterruptedException: {}", e.getMessage());
+        }
     }
 
     private boolean checkFreePlaceForVehicle(Vehicle vehicle) {

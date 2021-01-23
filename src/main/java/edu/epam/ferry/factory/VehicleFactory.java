@@ -1,8 +1,7 @@
 package edu.epam.ferry.factory;
 
-import edu.epam.ferry.entity.Car;
-import edu.epam.ferry.entity.Truck;
 import edu.epam.ferry.entity.Vehicle;
+import edu.epam.ferry.entity.VehicleType;
 import edu.epam.ferry.exception.VehicleException;
 import edu.epam.ferry.validator.VehicleValidator;
 import org.apache.logging.log4j.LogManager;
@@ -25,21 +24,16 @@ public class VehicleFactory {
     }
 
     public Vehicle createVehicle(List<Integer> data) throws VehicleException {
-        if(!VehicleValidator.isValidData(data)){
+        if (!VehicleValidator.isValidData(data)) {
             logger.error("Invalid data: {}", data);
             throw new VehicleException("Invalid data: " + data);
         }
         Vehicle vehicle;
         int size = data.get(0);
         int weight = data.get(1);
-        if(size > 4 || weight > 4){
-            vehicle = new Truck(size, weight);
-            logger.info("Create new Car: {}", vehicle);
-        }
-        else {
-            vehicle = new Car(size, weight);
-            logger.info("Create new Truck: {}", vehicle);
-        }
+        VehicleType state = (size > 4 || weight > 4) ? VehicleType.TRUCK : VehicleType.CAR;
+        vehicle = new Vehicle(size, weight, state);
+        logger.info("Create new Vehicle: {}", vehicle);
         return vehicle;
     }
 }
